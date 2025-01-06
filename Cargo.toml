@@ -1,3 +1,6 @@
 [workspace]
 resolver = "2"
-members = [ "dial-g711", "dial-v90","dial-v92"]
+members = [ "dial-pcm"]
+
+[workspace.dependencies]
+wide = { version = "0.7.30", default-features = false }

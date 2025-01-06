@@ -1,0 +1,15 @@
+[package]
+name = "dial-pcm"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+std = ["wide/std"]
+reference-impl = []
+
+[dependencies]
+wide = { workspace = true }
+
+[build-dependencies]
+bindgen = "0.71.1"
+cc = "1.2.7"
