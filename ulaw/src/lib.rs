@@ -1,30 +1,16 @@
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 
 pub fn compress(linear: i16) -> u8 {
-    const I14_MAX: i16 = 0b01_1111_1111_1111;
-    const I14_SHIFT_OFFSET: i16 = 2;
-    const MULAW_OFFSET: i16 = 33;
-
-    const NUM_SEGMENTS: u8 = 11;
-
-    const HIGH_NIBBLE_OFFSET: u8 = 4;
-    const HIGH_NIBBLE_MAX: u8 = 0b1000;
-
-    const LOW_NIBBLE_MAX: u8 = 0b1111;
-    const LOW_NIBBLE_MASK: u8 = 0b1111;
-
-    const SIGN_BIT_OFFSET: u8 = 7;
-
     let is_negative = linear.is_negative();
     let absno = i16::min(
-        (if is_negative { !linear } else { linear } >> I14_SHIFT_OFFSET) + MULAW_OFFSET,
-        I14_MAX,
+        (if is_negative { !linear } else { linear } >> 2) + 33,
+        0x1FFF,
     );
-    let segno = NUM_SEGMENTS - (absno.leading_zeros() as u8);
+    let segno = 11 - (absno.leading_zeros() as u8);
 
-    ((HIGH_NIBBLE_MAX - segno) << HIGH_NIBBLE_OFFSET)
-        | (LOW_NIBBLE_MAX - (((absno >> segno) as u8) & LOW_NIBBLE_MASK))
-        | (((!is_negative) as u8) << SIGN_BIT_OFFSET)
+    ((0b1000 - segno) << 4)
+        | (0b1111 - (((absno >> segno) as u8) & 0b1111))
+        | (((!is_negative) as u8) << 7)
 }
 
 pub fn compress_slice(linear_buf: &[i16], log_buf: &mut [u8]) -> usize {
@@ -59,7 +45,6 @@ pub fn expand_slice(log_buf: &[u8], linear_buf: &mut [i16]) -> usize {
     usize::min(log_buf.len(), linear_buf.len())
 }
 
-#[cfg(test)]
 pub mod g711 {
     use core::slice;
 
@@ -76,6 +61,7 @@ pub mod g711 {
     pub fn compress_slice(linear: &[i16], scratch: &mut [i16], log: &mut [u8]) -> usize {
         let linbuf = linear.as_ptr().cast_mut();
         let logbuf = scratch.as_mut_ptr();
+
         let k = linear.len().min(scratch.len()).min(log.len());
         let lseg = k.try_into().unwrap_or(i64::MAX);
 
@@ -101,6 +87,7 @@ pub mod g711 {
 
         let logbuf = scratch.as_mut_ptr();
         let linbuf = linear.as_ptr().cast_mut();
+
         let k = linear.len().min(scratch.len()).min(log.len());
         let lseg = k.try_into().unwrap_or(i64::MAX);
 
@@ -111,26 +98,50 @@ pub mod g711 {
 }
 
 #[cfg(test)]
-mod compare_impls {
+mod test {
+    extern crate alloc; // req'd for proptest
+    use alloc::format;
+
     use crate::g711;
+    use proptest::prelude::*;
 
-    #[test]
-    fn compress() {
-        for linear in -8159..8159 {
-            let expected = g711::compress(linear);
-            let actual = crate::compress(linear);
+    proptest! {
+        #[test]
+        fn compress(linear: i16) {
+            let expected = crate::compress(linear);
+            let actual = g711::compress(linear);
 
-            assert_eq!(expected, actual, "Mismatch between reference implementation and dial implementation when compressing {linear}");
+            prop_assert_eq!(expected, actual);
         }
-    }
 
-    #[test]
-    fn expand() {
-        for log in u8::MIN..=u8::MAX {
-            let expected = g711::expand(log);
-            let actual = crate::expand(log);
+        #[test]
+        fn compress_slice(linear in prop::array::uniform32(i16::MIN..)) {
+            let mut expected = [0u8; 32];
+            let mut actual = [0u8; 32];
 
-            assert_eq!(expected, actual, "Mismatch between reference implementation and dial implementation when expanding {log}");
+            g711::compress_slice(&linear, &mut [0i16; 32], &mut expected);
+            crate::compress_slice(&linear, &mut actual);
+
+            prop_assert_eq!(expected, actual);
+        }
+
+        #[test]
+        fn expand(log: u8) {
+            let expected = crate::expand(log);
+            let actual = g711::expand(log);
+
+            prop_assert_eq!(expected, actual);
+        }
+
+        #[test]
+        fn expand_slice(log in prop::array::uniform32(u8::MIN..)) {
+            let mut expected = [0; 32];
+            let mut actual = [0; 32];
+
+            g711::expand_slice(&log, &mut [0i16; 32], &mut expected);
+            crate::expand_slice(&log, &mut actual);
+
+            prop_assert_eq!(expected, actual);
         }
     }
 }

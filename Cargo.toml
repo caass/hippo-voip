@@ -1,5 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["dial-pcm"]
+members = ["ulaw"]
 
 [workspace.dependencies]
+ulaw = { path = "./ulaw" }

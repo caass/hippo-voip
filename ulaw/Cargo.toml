@@ -1,13 +1,15 @@
 [package]
-name = "dial-pcm"
+name = "ulaw"
 version = "0.1.0"
 edition = "2021"
 
 [features]
-std = []
 
 [dependencies]
 
+[dev-dependencies]
+proptest = "1.0"
+
 [build-dependencies]
-bindgen = "0.71.1"
-cc = "1.2.7"
+bindgen = "0.71"
+cc = "1.2"
