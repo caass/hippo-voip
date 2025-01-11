@@ -1,6 +1,6 @@
-use std::{env, path::PathBuf};
-
 fn main() {
+    use std::{env, path::PathBuf};
+
     let reference_dir = {
         let mut path: PathBuf = env::var("CARGO_MANIFEST_DIR").unwrap().into();
         path.push("reference");

@@ -27,6 +27,16 @@ pub fn compress(linear: i16) -> u8 {
         | (((!is_negative) as u8) << SIGN_BIT_OFFSET)
 }
 
+pub fn compress_slice(linear_buf: &[i16], log_buf: &mut [u8]) -> usize {
+    linear_buf
+        .iter()
+        .copied()
+        .zip(log_buf.iter_mut())
+        .for_each(|(linear, slot)| *slot = compress(linear));
+
+    usize::min(linear_buf.len(), log_buf.len())
+}
+
 pub fn expand(log: u8) -> i16 {
     let sign = if log < 0b1000_0000 { -1i16 } else { 1 };
 
@@ -39,6 +49,17 @@ pub fn expand(log: u8) -> i16 {
     sign * ((0b1000_0000 << exponent) + (step * i16::from(mantissa)) + (step / 2) - (4 * 33))
 }
 
+pub fn expand_slice(log_buf: &[u8], linear_buf: &mut [i16]) -> usize {
+    log_buf
+        .iter()
+        .copied()
+        .zip(linear_buf.iter_mut())
+        .for_each(|(log, slot)| *slot = expand(log));
+
+    usize::min(log_buf.len(), linear_buf.len())
+}
+
+#[cfg(test)]
 pub mod g711 {
     use core::slice;
 
