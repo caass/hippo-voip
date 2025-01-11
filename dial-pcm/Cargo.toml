@@ -4,11 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-std = ["wide/std"]
-reference-impl = []
+std = []
 
 [dependencies]
-wide = { workspace = true }
 
 [build-dependencies]
 bindgen = "0.71.1"

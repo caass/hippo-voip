@@ -1,6 +1,5 @@
 [workspace]
 resolver = "2"
-members = [ "dial-pcm"]
+members = ["dial-pcm"]
 
 [workspace.dependencies]
-wide = { version = "0.7.30", default-features = false }
