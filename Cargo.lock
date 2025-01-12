@@ -12,6 +12,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "amus"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+ "cc",
+ "proptest",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -415,15 +424,6 @@ dependencies = [
  "once_cell",
  "rustix",
  "windows-sys",
-]
-
-[[package]]
-name = "ulaw"
-version = "0.1.0"
-dependencies = [
- "bindgen",
- "cc",
- "proptest",
 ]
 
 [[package]]
