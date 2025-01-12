@@ -1,8 +1,7 @@
 use core::ptr;
 
-use crate::traits::Compander;
-
 use crate::g711::sys;
+use crate::traits::Compander;
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct ALaw;
