@@ -1,15 +1,23 @@
 [package]
 name = "ulaw"
 version = "0.1.0"
-edition = "2021"
+edition = { workspace = true }
+authors = { workspace = true }
 
 [features]
+default = ["std"]
 
-[dependencies]
+std = ["alloc"]
+alloc = []
+
+g711 = ["bindgen", "cc"]
 
 [dev-dependencies]
 proptest = "1.0"
 
 [build-dependencies]
-bindgen = "0.71"
-cc = "1.2"
+bindgen = { version = "0.71", optional = true }
+cc = { version = "1.2", optional = true }
+
+[lints]
+workspace = true
