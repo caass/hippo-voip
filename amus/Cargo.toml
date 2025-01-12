@@ -5,18 +5,17 @@ edition = { workspace = true }
 authors = { workspace = true }
 
 [features]
-default = ["std"]
+default = ["std", "g711"]
 
 std = ["alloc"]
 alloc = []
 
-g711 = ["bindgen", "cc"]
+g711 = ["cc"]
 
 [dev-dependencies]
 proptest = "1.0"
 
 [build-dependencies]
-bindgen = { version = "0.71", optional = true }
 cc = { version = "1.2", optional = true }
 
 [lints]

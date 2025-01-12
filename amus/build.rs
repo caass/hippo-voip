@@ -13,22 +13,6 @@ fn main() {
     println!("cargo::rerun-if-changed={}", g711_c.display());
     println!("cargo::rerun-if-changed={}", g711_h.display());
 
-    let g711_h_rs = {
-        let mut path: PathBuf = env::var("OUT_DIR").unwrap().into();
-        path.push("g711.h.rs");
-        println!("cargo::rustc-env=G711_H_RS={}", path.display());
-        path
-    };
-
-    bindgen::builder()
-        .header(g711_h.display().to_string())
-        .use_core()
-        .allowlist_function(".law.+")
-        .generate()
-        .unwrap()
-        .write_to_file(&g711_h_rs)
-        .unwrap();
-
     cc::Build::new().file(&g711_c).compile("g711");
 }
 
