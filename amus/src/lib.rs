@@ -44,5 +44,21 @@ mod conformance {
             prop_assert_eq!(expected, actual);
         }
 
+        #[test]
+        fn alaw_compress(linear: i16) {
+            let expected = linear.compress::<g711::ALaw>();
+            let actual = linear.compress::<crate::ALaw>();
+
+            prop_assert_eq!(expected, actual);
+        }
+
+        #[test]
+        fn alaw_expand(log: u8) {
+            let expected = log.expand::<g711::ALaw>();
+            let actual = log.expand::<crate::ALaw>();
+
+            prop_assert_eq!(expected, actual);
+        }
+
     }
 }
