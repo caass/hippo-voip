@@ -20,7 +20,7 @@ impl Compander<i16, u8> for ALaw {
         )]
         let leading_zeroes = ix.leading_zeros() as u8;
 
-        (if leading_zeroes < 12 {
+        let magnitude = if leading_zeroes < 12 {
             let mantissa = ((ix >> (11 - leading_zeroes)) & 0b1111) as u8;
             let exponent = (12 - leading_zeroes) << 4;
 
@@ -33,8 +33,9 @@ impl Compander<i16, u8> for ALaw {
             let byte = ix as u8;
 
             byte
-        } | sign_bit)
-            ^ 0b0101_0101
+        };
+
+        (magnitude | sign_bit) ^ 0b0101_0101
     }
 
     fn expand(log: u8) -> i16 {
