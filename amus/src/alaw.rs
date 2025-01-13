@@ -12,36 +12,46 @@ impl Compander<i16, u8> for ALaw {
             reason = "We guarantee the castee is positive by NOT-ing negative values (i.e. flipping the sign bit)."
         )]
         let ix = (if is_negative { !linear } else { linear }) as u16 >> 4;
+        let sign_bit = u8::from(!is_negative) << 7;
 
+        #[allow(
+            clippy::cast_possible_truncation,
+            reason = "There can only ever be 16 leading zeroes in u16, which fits in a u8."
+        )]
         let leading_zeroes = ix.leading_zeros() as u8;
-        ((if leading_zeroes < 12 {
-            ((ix >> (11 - leading_zeroes)) & 0b1111) as u8 | ((12 - leading_zeroes) << 4)
+
+        (if leading_zeroes < 12 {
+            let mantissa = ((ix >> (11 - leading_zeroes)) & 0b1111) as u8;
+            let exponent = (12 - leading_zeroes) << 4;
+
+            mantissa | exponent
         } else {
-            ix as u8
-        }) | (u8::from(!is_negative) << 7))
+            #[allow(
+                clippy::cast_possible_truncation,
+                reason = "`ix` always has at least 12 leading zeroes due to conditional."
+            )]
+            let byte = ix as u8;
+
+            byte
+        } | sign_bit)
             ^ 0b0101_0101
     }
 
     fn expand(log: u8) -> i16 {
-        let mut ix = i16::from(log) ^ 0b0101_0101;
+        let sign = 1 - 2 * i16::from(u8::from(log < 0b1000_0000));
+        let ix = (log ^ 0b0101_0101) & 0b0111_1111;
 
-        ix &= 0x007F;
-        let iexp = ix >> 4;
-        let mut mant = ix & (0x000F);
-        if iexp > 0 {
-            mant += 16;
-        }
+        let exponent = ix >> 4;
+        let mantissa = {
+            let low_nibble = ix & (0b1111);
+            let nonzero_exponent_marker_bit = u8::from(exponent > 0) << 4;
 
-        mant = (mant << 4) + (0x0008);
+            let base = (i16::from(low_nibble | nonzero_exponent_marker_bit) << 4) | 0b1000;
+            let offset = u8::from(exponent > 1) * exponent.saturating_sub(1);
 
-        if iexp > 1 {
-            mant <<= iexp - 1;
-        }
+            base << offset
+        };
 
-        if log > 127 {
-            mant
-        } else {
-            -mant
-        }
+        sign * mantissa
     }
 }
