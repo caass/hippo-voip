@@ -56,14 +56,14 @@ impl Compander<i16, u8> for ULaw {
     }
 
     fn expand(log: u8) -> i16 {
-        let sign = if log < 0b1000_0000 { -1i16 } else { 1 };
+        let sign = 2 * i16::from(log >> 7) - 1;
 
         let mut mantissa = !log;
-        let exponent = (mantissa >> 4) & 0b111;
+        let exponent = (mantissa >> 4) & 0b0111;
         mantissa &= 0b1111;
 
         let step = 4i16 << (exponent + 1);
 
-        sign * ((0b1000_0000 << exponent) + (step * i16::from(mantissa)) + (step / 2) - (4 * 33))
+        sign * ((0b1000_0000 << exponent) + (step * i16::from(mantissa)) + (step / 2) - (4 * 0x21))
     }
 }
