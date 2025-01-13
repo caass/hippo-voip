@@ -1,13 +1,13 @@
 [workspace]
 resolver = "2"
-members = ["amus"]
+members = ["amuse"]
 
 [workspace.package]
 edition = "2021"
 authors = ["Cass Fridkin <cass@swag.lgbt>"]
 
 [workspace.dependencies]
-amus = { path = "./amus", version = "0.1.0" }
+amuse = { path = "./amuse", version = "0.1.0" }
 
 [workspace.lints.clippy]
 correctness = "deny"
