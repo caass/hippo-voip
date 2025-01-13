@@ -7,16 +7,14 @@ mod alaw;
 #[cfg(feature = "g711")]
 pub mod g711;
 mod impls;
-mod traits;
+pub mod traits;
 mod ulaw;
 
 pub use alaw::ALaw;
 pub use ulaw::ULaw;
 
 pub mod prelude {
-    pub use crate::alaw::ALaw;
     pub use crate::traits::*;
-    pub use crate::ulaw::ULaw;
 }
 
 #[cfg(all(test, feature = "g711", feature = "alloc"))]
