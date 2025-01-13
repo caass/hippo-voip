@@ -11,28 +11,15 @@ impl Compander<i16, u8> for ALaw {
             clippy::cast_sign_loss,
             reason = "We guarantee the castee is positive by NOT-ing negative values (i.e. flipping the sign bit)."
         )]
-        let mut ix = (if is_negative { !linear } else { linear }) as u16 >> 4;
+        let ix = (if is_negative { !linear } else { linear }) as u16 >> 4;
 
-        if ix > 0b1111 {
-            let mut iexp = 1;
-            while ix > 0b1_1111 {
-                ix >>= 1;
-                iexp += 1;
-            }
-            ix -= 16;
-
-            ix += iexp << 4;
-        }
-
-        let sign_bit = u8::from(!is_negative) << 7;
-
-        #[allow(
-            clippy::cast_possible_truncation,
-            reason = "ix takes up 8 bits after above logic"
-        )]
-        let out = (sign_bit | ix as u8) ^ 0b0101_0101;
-
-        out
+        let leading_zeroes = ix.leading_zeros() as u8;
+        ((if leading_zeroes < 12 {
+            ((ix >> (11 - leading_zeroes)) & 0b1111) as u8 | ((12 - leading_zeroes) << 4)
+        } else {
+            ix as u8
+        }) | (u8::from(!is_negative) << 7))
+            ^ 0b0101_0101
     }
 
     fn expand(log: u8) -> i16 {
