@@ -1,17 +1,17 @@
 use core::ptr;
 
-use crate::g711::sys;
+use crate::g191::sys;
 use crate::traits::Compander;
 
 #[derive(Debug, Clone, Copy, Default)]
-pub struct ULaw;
+pub struct ALaw;
 
-impl Compander<i16, u8> for ULaw {
+impl Compander<i16, u8> for ALaw {
     fn compress(linear: i16) -> u8 {
         let mut log = 0i16;
 
         unsafe {
-            sys::ulaw_compress(
+            sys::alaw_compress(
                 1,
                 ptr::from_ref(&linear).cast_mut(),
                 ptr::from_mut(&mut log),
@@ -32,7 +32,7 @@ impl Compander<i16, u8> for ULaw {
         let mut linear = 0i16;
 
         unsafe {
-            sys::ulaw_expand(
+            sys::alaw_expand(
                 1,
                 ptr::from_ref(&i16::from(log)).cast_mut(),
                 ptr::from_mut(&mut linear),

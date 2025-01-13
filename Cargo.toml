@@ -5,6 +5,9 @@ members = ["amuse"]
 [workspace.package]
 edition = "2021"
 authors = ["Cass Fridkin <cass@swag.lgbt>"]
+license-file = "LICENSE.md"
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/caass/dial"
 
 [workspace.dependencies]
 amuse = { path = "./amuse", version = "0.1.0" }
@@ -15,7 +18,7 @@ suspicious = "warn"
 complexity = "warn"
 perf = "warn"
 pedantic = "warn"
-# cargo = "warn"
+cargo = "warn"
 
 [workspace.lints.rust]
 deprecated-safe = "deny"

@@ -1,4 +1,4 @@
-#[cfg(feature = "g711")]
+#[cfg(feature = "g191")]
 fn main() {
     use std::{env, path::PathBuf};
 
@@ -16,5 +16,5 @@ fn main() {
     cc::Build::new().file(&g711_c).compile("g711");
 }
 
-#[cfg(not(feature = "g711"))]
+#[cfg(not(feature = "g191"))]
 fn main() {}

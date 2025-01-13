@@ -4,8 +4,8 @@
 extern crate alloc;
 
 mod alaw;
-#[cfg(feature = "g711")]
-pub mod g711;
+#[cfg(feature = "g191")]
+pub mod g191;
 mod impls;
 pub mod traits;
 mod ulaw;
@@ -17,18 +17,18 @@ pub mod prelude {
     pub use crate::traits::*;
 }
 
-#[cfg(all(test, feature = "g711", feature = "alloc"))]
+#[cfg(all(test, feature = "g191", feature = "alloc"))]
 mod conformance {
     use alloc::format;
 
-    use crate::g711;
+    use crate::g191;
     use crate::prelude::*;
     use proptest::prelude::*;
 
     proptest! {
         #[test]
         fn ulaw_compress(linear: i16) {
-            let expected = linear.compress::<g711::ULaw>();
+            let expected = linear.compress::<g191::ULaw>();
             let actual = linear.compress::<crate::ULaw>();
 
             prop_assert_eq!(expected, actual);
@@ -36,7 +36,7 @@ mod conformance {
 
         #[test]
         fn ulaw_expand(log: u8) {
-            let expected = log.expand::<g711::ULaw>();
+            let expected = log.expand::<g191::ULaw>();
             let actual = log.expand::<crate::ULaw>();
 
             prop_assert_eq!(expected, actual);
@@ -44,7 +44,7 @@ mod conformance {
 
         #[test]
         fn alaw_compress(linear: i16) {
-            let expected = linear.compress::<g711::ALaw>();
+            let expected = linear.compress::<g191::ALaw>();
             let actual = linear.compress::<crate::ALaw>();
 
             prop_assert_eq!(expected, actual);
@@ -52,7 +52,7 @@ mod conformance {
 
         #[test]
         fn alaw_expand(log: u8) {
-            let expected = log.expand::<g711::ALaw>();
+            let expected = log.expand::<g191::ALaw>();
             let actual = log.expand::<crate::ALaw>();
 
             prop_assert_eq!(expected, actual);

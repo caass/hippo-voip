@@ -3,14 +3,27 @@ name = "amuse"
 version = "0.1.0"
 edition = { workspace = true }
 authors = { workspace = true }
+license = { workspace = true }
+license-file = { workspace = true }
+repository = { workspace = true }
+categories = [
+    "algorithms",
+    "compression",
+    "encoding",
+    "multimedia::audio",
+    "no-std::no-alloc",
+]
+keywords = ["mu-law", "a-law", "u-law", "pcm", "pulse-code-modulation"]
+description = "Rust implementations of the A-Law and μ-law companding algorithms."
+
 
 [features]
-default = []
+default = ["std"]
 
 std = ["alloc"]
 alloc = []
 
-g711 = ["cc"]
+g191 = ["cc"]
 
 [dev-dependencies]
 proptest = "1.0"
