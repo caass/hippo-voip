@@ -43,7 +43,7 @@ pub trait ReadExt: Read {
         &mut self,
         linear: &mut Vec<i16>,
     ) -> Result<usize> {
-        let mut log = vec![];
+        let mut log = Vec::with_capacity(linear.capacity());
         let n = self.read_to_end(&mut log)?;
 
         *linear = log.expand::<C>();
