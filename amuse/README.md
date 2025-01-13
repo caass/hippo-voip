@@ -6,6 +6,8 @@ The algorithms in `amuse` are drop-in compatible with the implementations in the
 
 ## License
 
-The code contained in `amuse` is licensed under the [GNU Affero General Public License v3.0](../LICENSE.md), with the exception of the reference implementation in [`./reference`](./reference), which is licensed under the [ITU-T General Public License](./reference/LICENSE.md).
+The code contained in `amuse` is licensed under the [GNU Affero General Public License v3.0](../LICENSE.md).
 
-When the `g191` feature is enabled, the code in the `g191` module is also licensed under the I-TUT GPL.
+The ITU-T G.191 reference implementation in [`./reference`](./reference) is licensed under the [ITU-T General Public License](./reference/LICENSE.md).
+
+Rust bindings to the reference implementation are exported from the `g191` module when the `g191` feature is enabled and are also licensed under the I-TUT GPL.

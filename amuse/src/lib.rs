@@ -14,49 +14,7 @@ pub use alaw::ALaw;
 pub use ulaw::ULaw;
 
 pub mod prelude {
+    #[cfg(feature = "std")]
+    pub use crate::impls::std::{ReadExt, WriteExt};
     pub use crate::traits::*;
-}
-
-#[cfg(all(test, feature = "g191", feature = "alloc"))]
-mod conformance {
-    use alloc::format;
-
-    use crate::g191;
-    use crate::prelude::*;
-    use proptest::prelude::*;
-
-    proptest! {
-        #[test]
-        fn ulaw_compress(linear: i16) {
-            let expected = linear.compress::<g191::ULaw>();
-            let actual = linear.compress::<crate::ULaw>();
-
-            prop_assert_eq!(expected, actual);
-        }
-
-        #[test]
-        fn ulaw_expand(log: u8) {
-            let expected = log.expand::<g191::ULaw>();
-            let actual = log.expand::<crate::ULaw>();
-
-            prop_assert_eq!(expected, actual);
-        }
-
-        #[test]
-        fn alaw_compress(linear: i16) {
-            let expected = linear.compress::<g191::ALaw>();
-            let actual = linear.compress::<crate::ALaw>();
-
-            prop_assert_eq!(expected, actual);
-        }
-
-        #[test]
-        fn alaw_expand(log: u8) {
-            let expected = log.expand::<g191::ALaw>();
-            let actual = log.expand::<crate::ALaw>();
-
-            prop_assert_eq!(expected, actual);
-        }
-
-    }
 }

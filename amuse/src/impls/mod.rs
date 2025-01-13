@@ -1,6 +1,6 @@
-#[path = "core.rs"]
-mod impls_core;
-
 #[cfg(feature = "alloc")]
-#[path = "alloc.rs"]
-mod impls_alloc;
+pub mod alloc;
+#[path = "core.rs"]
+pub mod core;
+#[cfg(feature = "std")]
+pub mod std;

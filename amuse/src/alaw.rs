@@ -39,7 +39,7 @@ impl Compander<i16, u8> for ALaw {
     }
 
     fn expand(log: u8) -> i16 {
-        let sign = 1 - 2 * i16::from(u8::from(log < 0b1000_0000));
+        let sign = 1 - i16::from(2 * u8::from(log < 0b1000_0000));
         let ix = (log ^ 0b0101_0101) & 0b0111_1111;
 
         let exponent = ix >> 4;
