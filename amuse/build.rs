@@ -1,4 +1,6 @@
-#[cfg(feature = "g191")]
+//! Conditionally compile the g191 implementations if the `g191` or `g191-sys` features are enabled.
+
+#[cfg(any(feature = "g191", feature = "g191-sys"))]
 fn main() {
     use std::{env, path::PathBuf};
 
@@ -16,5 +18,5 @@ fn main() {
     cc::Build::new().file(&g711_c).compile("g711");
 }
 
-#[cfg(not(feature = "g191"))]
+#[cfg(not(any(feature = "g191", feature = "g191-sys")))]
 fn main() {}

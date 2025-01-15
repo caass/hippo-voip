@@ -1,4 +1,4 @@
-The code in `amuse` is licensed under the GNU Affero General Public License Version 3, with the exception of the code in the `src/191` directory and `tests/conformance` file, which is licensed under the ITU-T General Public License. The combined text of both licenses is replicated below.
+The code in `amuse` is licensed under the GNU Affero General Public License Version 3, with the exception of the code in the `src/191.rs` and `tests/conformance.rs` files, which is licensed under the ITU-T General Public License. The combined text of both licenses is replicated below.
 
 # GNU AFFERO GENERAL PUBLIC LICENSE
 

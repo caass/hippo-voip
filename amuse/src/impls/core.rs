@@ -43,16 +43,12 @@ impl ExpandedBuf for [i16] {
     type CompressedBuf = [u8];
 }
 
-impl<C, E, T> BufCompander<[E], [C]> for T
+impl<T> BufCompander<[i16], [u8]> for T
 where
-    E: Expanded<Compressed = C> + Copy,
-    C: Compressed<Expanded = E> + Copy,
-    [E]: ExpandedBuf<CompressedBuf = [C]>,
-    [C]: CompressedBuf<ExpandedBuf = [E]>,
-    T: Compander<E, C>,
+    T: Compander<i16, u8>,
 {
     #[inline]
-    fn compress_buf(linear_buf: &[E], log_buf: &mut [C]) -> usize {
+    fn compress_buf(linear_buf: &[i16], log_buf: &mut [u8]) -> usize {
         linear_buf
             .iter()
             .copied()
@@ -63,7 +59,7 @@ where
     }
 
     #[inline]
-    fn expand_buf(log_buf: &[C], linear_buf: &mut [E]) -> usize {
+    fn expand_buf(log_buf: &[u8], linear_buf: &mut [i16]) -> usize {
         log_buf
             .iter()
             .copied()

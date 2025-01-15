@@ -16,13 +16,20 @@ keywords = ["mu-law", "a-law", "u-law", "pcm", "pulse-code-modulation"]
 description = "Rust implementations of the A-Law and μ-law companding algorithms."
 
 
+[package.metadata.docs.rs]
+all-features = true
+
 [features]
-default = ["std"]
+default = []
 
 std = ["alloc"]
 alloc = []
 
 g191 = ["cc"]
+g191-sys = ["cc", "visibility"]
+
+[dependencies]
+visibility = { version = "0.1", optional = true }
 
 [dev-dependencies]
 proptest = "1.0"

@@ -13,13 +13,17 @@ repository = "https://github.com/caass/dial"
 amuse = { path = "./amuse", version = "0.1.0" }
 
 [workspace.lints.clippy]
-correctness = "deny"
-suspicious = "warn"
-complexity = "warn"
-perf = "warn"
-pedantic = "warn"
-cargo = "warn"
+correctness = { level = "deny", priority = -1 }
+suspicious = { level = "warn", priority = -1 }
+complexity = { level = "warn", priority = -1 }
+perf = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+
+undocumented_unsafe_blocks = "warn"
+multiple_unsafe_ops_per_block = "warn"
+missing_safety_doc = "warn"
 
 [workspace.lints.rust]
-deprecated-safe = "deny"
-rust-2024-compatibility = "warn"
+deprecated-safe = { level = "deny", priority = -1 }
+rust-2024-compatibility = { level = "warn", priority = -1 }

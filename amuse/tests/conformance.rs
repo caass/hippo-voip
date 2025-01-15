@@ -10,35 +10,36 @@ use proptest::prelude::*;
 
 proptest! {
     #[test]
-    fn ulaw_compress(linear: i16) {
-        let expected = linear.compress::<g191::ULaw>();
-        let actual = linear.compress::<amuse::ULaw>();
+    fn ulaw(linear: [i16; 32]) {
+        prop_assert_eq!(
+            linear.compress::<g191::ULaw>(),
+            linear.compress::<amuse::ULaw>(),
+            "Mismatch in μ-law compression."
+        );
 
-        prop_assert_eq!(expected, actual);
+        let log = linear.compress::<amuse::ULaw>();
+
+        prop_assert_eq!(
+            log.expand::<g191::ULaw>(),
+            log.expand::<amuse::ULaw>(),
+            "Mismatch in μ-law expansion."
+        );
     }
 
     #[test]
-    fn ulaw_expand(log: u8) {
-        let expected = log.expand::<g191::ULaw>();
-        let actual = log.expand::<amuse::ULaw>();
+    fn alaw(linear: [i16; 32]) {
+        prop_assert_eq!(
+            linear.compress::<g191::ALaw>(),
+            linear.compress::<amuse::ALaw>(),
+            "Mismatch in A-law compression."
+        );
 
-        prop_assert_eq!(expected, actual);
+        let log = linear.compress::<amuse::ALaw>();
+
+        prop_assert_eq!(
+            log.expand::<g191::ALaw>(),
+            log.expand::<amuse::ALaw>(),
+            "Mismatch in A-law expansion."
+        );
     }
-
-    #[test]
-    fn alaw_compress(linear: i16) {
-        let expected = linear.compress::<g191::ALaw>();
-        let actual = linear.compress::<amuse::ALaw>();
-
-        prop_assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn alaw_expand(log: u8) {
-        let expected = log.expand::<g191::ALaw>();
-        let actual = log.expand::<amuse::ALaw>();
-
-        prop_assert_eq!(expected, actual);
-    }
-
 }
