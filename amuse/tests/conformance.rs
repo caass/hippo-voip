@@ -1,16 +1,11 @@
 #![cfg(all(test, feature = "g191"))]
 
-extern crate alloc;
-
-use alloc::format;
-
-use amuse::g191;
-use amuse::prelude::*;
+use amuse::{g191, Compressed, Expanded};
 use proptest::prelude::*;
 
 proptest! {
     #[test]
-    fn ulaw(linear: [i16; 32]) {
+    fn ulaw(linear: [i16; 31]) {
         prop_assert_eq!(
             linear.compress::<g191::ULaw>(),
             linear.compress::<amuse::ULaw>(),
@@ -27,7 +22,7 @@ proptest! {
     }
 
     #[test]
-    fn alaw(linear: [i16; 32]) {
+    fn alaw(linear: [i16; 31]) {
         prop_assert_eq!(
             linear.compress::<g191::ALaw>(),
             linear.compress::<amuse::ALaw>(),

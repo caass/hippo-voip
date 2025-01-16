@@ -123,8 +123,9 @@ pub struct ULaw;
 #[cfg(feature = "g191")]
 impl Compander for ULaw {
     fn compress(linear: i16) -> u8 {
-        let mut log = 0i16;
+        let mut log = 0;
 
+        // Safety: it's safe to read 1 short from `linear` and write 1 short to `log`
         unsafe {
             sys::ulaw_compress(1, ptr::from_ref(&linear), ptr::from_mut(&mut log));
         }
@@ -140,8 +141,9 @@ impl Compander for ULaw {
     }
 
     fn expand(log: u8) -> i16 {
-        let mut linear = 0i16;
+        let mut linear = 0;
 
+        // Safety: it's safe to read 1 short from `log` and write 1 short to `linear`
         unsafe {
             sys::ulaw_expand(
                 1,
@@ -161,8 +163,9 @@ pub struct ALaw;
 #[cfg(feature = "g191")]
 impl Compander for ALaw {
     fn compress(linear: i16) -> u8 {
-        let mut log = 0i16;
+        let mut log = 0;
 
+        // Safety: it's safe to read 1 short from `linear` and write 1 short to `log`
         unsafe {
             sys::alaw_compress(1, ptr::from_ref(&linear), ptr::from_mut(&mut log));
         }
@@ -178,8 +181,9 @@ impl Compander for ALaw {
     }
 
     fn expand(log: u8) -> i16 {
-        let mut linear = 0i16;
+        let mut linear = 0;
 
+        // Safety: it's safe to read 1 short from `log` and write 1 short to `linear`
         unsafe {
             sys::alaw_expand(
                 1,

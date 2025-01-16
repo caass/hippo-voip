@@ -141,7 +141,7 @@ impl Compander for ALaw {
     }
 
     fn expand(log: u8) -> i16 {
-        let sign = 1 - i16::from(2 * u8::from(log < 0b1000_0000));
+        let sign = if log < 0b1000_0000 { -1 } else { 1 };
         let ix = (log ^ 0b0101_0101) & 0b0111_1111;
 
         let exponent = ix >> 4;
@@ -150,7 +150,7 @@ impl Compander for ALaw {
             let nonzero_exponent_marker_bit = u8::from(exponent > 0) << 4;
 
             let base = (i16::from(low_nibble | nonzero_exponent_marker_bit) << 4) | 0b1000;
-            let offset = u8::from(exponent > 1) * exponent.saturating_sub(1);
+            let offset = u8::from(exponent > 1) * (exponent - 1);
 
             base << offset
         };
