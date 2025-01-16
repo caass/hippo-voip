@@ -1,60 +1,66 @@
-//! # amuse
-//!
-//! Pure-rust implementations of the [μ-law][1] and [A-law][2] companding algorithms as specified in
-//! [ITU-T Recommendation G.711][3].
-//!
-//! The algorithms in `amuse` are drop-in compatible with the implementations in the
-//! [ITU-T Software Tool Library (G.191)][4] ([here][5]), but `amuse` doesn't link against those implementations
-//! unless the `g191` feature is enabled.
-//!
-//! In general, you'll want to use `amuse` by bringing the various compansion traits into scope with a prelude import.
-//! These traits provide access to the [`.expand()`][6], [`.compress()`][7], [`.expand_buf()`][8], and
-//! [`.compress_buf()`][9] methods. These methods are generic over either algorithm ([`ALaw`][10] or [`ULaw`][11]),
-//! so you can use the turbofish operator to specify the desired algorithm:
-//!
-//! ```
-//! use amuse::prelude::*;
-//!
-//! const ENCODED: [u8; 32] = *b"This string is ulaw encoded data";
-//!
-//! let decoded = ENCODED.expand::<ULaw>();
-//! assert_eq!(decoded, [
-//!     -748, -244, -228, -96, -7932, -96, -88, -104, -228, -148, -260,
-//!     -7932, -228, -96, -7932, -80, -180, -356, -64, -7932, -292, -148,
-//!     -324, -132, -308, -292, -308, -7932, -308, -356, -88, -356
-//! ]);
-//!
-//! let re_encoded = decoded.compress::<ULaw>();
-//! assert_eq!(re_encoded, ENCODED);
-//! ```
-//!
-//! [1]: https://en.wikipedia.org/wiki/%CE%9C-law_algorithm
-//! [2]: https://en.wikipedia.org/wiki/A-law_algorithm
-//! [3]: https://www.itu.int/rec/T-REC-G.711-198811-I/en
-//! [4]: https://github.com/openitu/STL
-//! [5]: https://github.com/openitu/STL/tree/dev/src/g711
-//! [6]: `crate::traits::Compressed::expand`
-//! [7]: `crate::traits::Expanded::compress`
-//! [8]: `crate::traits::CompressedBuf::expand_buf`
-//! [9]: `crate::traits::ExpandedBuf::compress_buf`
-//! [10]: `crate::ALaw`
-//! [11]: `crate::ULaw`
-#![cfg_attr(not(feature = "std"), no_std)]
-
-#[cfg(feature = "alloc")]
-extern crate alloc;
-
 #[cfg(any(feature = "g191", feature = "g191-sys"))]
 pub mod g191;
-mod impls;
-pub mod traits;
 
-use crate::traits::Compander;
+pub trait Compander {
+    #[must_use]
+    fn compress(linear: i16) -> u8;
+
+    #[must_use]
+    fn expand(log: u8) -> i16;
+
+    #[inline]
+    fn expand_into<T: AsRef<[u8]> + ?Sized>(log: &T, linear: &mut Vec<i16>) {
+        let log = log.as_ref();
+
+        linear.reserve(log.len());
+        linear.extend(log.iter().copied().map(Self::expand));
+    }
+
+    #[inline]
+    fn compress_into<T: AsRef<[i16]> + ?Sized>(linear: &T, log: &mut Vec<u8>) {
+        let linear = linear.as_ref();
+
+        log.reserve(linear.len());
+        log.extend(linear.iter().copied().map(Self::compress));
+    }
+}
+
+pub trait Compressed: AsRef<[u8]> {
+    #[inline]
+    fn expand<C: Compander>(&self) -> Vec<i16> {
+        let mut linear = Vec::new();
+        self.expand_into::<C>(&mut linear);
+        linear
+    }
+
+    #[inline]
+    fn expand_into<C: Compander>(&self, linear: &mut Vec<i16>) {
+        C::expand_into(self, linear);
+    }
+}
+
+impl<T: AsRef<[u8]>> Compressed for T {}
+
+pub trait Expanded: AsRef<[i16]> {
+    #[inline]
+    fn compress<C: Compander>(&self) -> Vec<u8> {
+        let mut log = Vec::new();
+        self.compress_into::<C>(&mut log);
+        log
+    }
+
+    #[inline]
+    fn compress_into<C: Compander>(&self, log: &mut Vec<u8>) {
+        C::compress_into(self, log);
+    }
+}
+
+impl<T: AsRef<[i16]>> Expanded for T {}
 
 #[derive(Debug, Clone, Copy, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ULaw;
 
-impl Compander<i16, u8> for ULaw {
+impl Compander for ULaw {
     fn compress(linear: i16) -> u8 {
         let is_negative = linear.is_negative();
 
@@ -99,7 +105,7 @@ impl Compander<i16, u8> for ULaw {
 #[derive(Debug, Clone, Copy, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ALaw;
 
-impl Compander<i16, u8> for ALaw {
+impl Compander for ALaw {
     fn compress(linear: i16) -> u8 {
         let is_negative = linear.is_negative();
 
@@ -151,12 +157,4 @@ impl Compander<i16, u8> for ALaw {
 
         sign * mantissa
     }
-}
-
-pub mod prelude {
-    #[cfg(feature = "g191")]
-    pub use crate::g191;
-    pub use crate::traits::*;
-    pub use crate::ALaw;
-    pub use crate::ULaw;
 }

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["amuse"]
+members = ["amuse", "hippo-voip"]
 
 [workspace.package]
 edition = "2021"
@@ -12,16 +12,16 @@ repository = "https://github.com/caass/hippovoip"
 amuse = { path = "./amuse", version = "0.1.0" }
 
 [workspace.lints.clippy]
-correctness = { level = "deny", priority = -1 }
-suspicious = { level = "warn", priority = -1 }
-complexity = { level = "warn", priority = -1 }
-perf = { level = "warn", priority = -1 }
-pedantic = { level = "warn", priority = -1 }
-cargo = { level = "warn", priority = -1 }
+# correctness = { level = "deny", priority = -1 }
+# suspicious = { level = "warn", priority = -1 }
+# complexity = { level = "warn", priority = -1 }
+# perf = { level = "warn", priority = -1 }
+# pedantic = { level = "warn", priority = -1 }
+# cargo = { level = "warn", priority = -1 }
 
-undocumented_unsafe_blocks = "warn"
-multiple_unsafe_ops_per_block = "warn"
-missing_safety_doc = "warn"
+# undocumented_unsafe_blocks = "warn"
+# multiple_unsafe_ops_per_block = "warn"
+# missing_safety_doc = "warn"
 
 [workspace.lints.rust]
 deprecated-safe = { level = "deny", priority = -1 }

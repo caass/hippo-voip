@@ -1,6 +1,6 @@
 use core::ptr;
 
-use crate::traits::Compander;
+use crate::Compander;
 
 #[cfg_attr(feature = "g191-sys", visibility::make(pub))]
 mod sys {
@@ -121,7 +121,7 @@ mod sys {
 pub struct ULaw;
 
 #[cfg(feature = "g191")]
-impl Compander<i16, u8> for ULaw {
+impl Compander for ULaw {
     fn compress(linear: i16) -> u8 {
         let mut log = 0i16;
 
@@ -159,7 +159,7 @@ impl Compander<i16, u8> for ULaw {
 pub struct ALaw;
 
 #[cfg(feature = "g191")]
-impl Compander<i16, u8> for ALaw {
+impl Compander for ALaw {
     fn compress(linear: i16) -> u8 {
         let mut log = 0i16;
 

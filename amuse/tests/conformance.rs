@@ -1,4 +1,4 @@
-#![cfg(all(test, feature = "g191", feature = "alloc"))]
+#![cfg(all(test, feature = "g191"))]
 
 extern crate alloc;
 
