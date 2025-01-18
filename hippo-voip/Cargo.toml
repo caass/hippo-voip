@@ -9,7 +9,7 @@ repository.workspace = true
 
 [dependencies]
 base64 = "0.22"
-amuse = { workspace = true }
+amuse = { workspace = true, features = ["alloc"] }
 thiserror = "2.0.11"
 
 [lints]

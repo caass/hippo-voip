@@ -1,3 +1,11 @@
+#![cfg_attr(not(feature = "std"), no_std)]
+
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
+#[cfg(feature = "alloc")]
+use alloc::vec::Vec;
+
 #[cfg(any(feature = "g191", feature = "g191-sys"))]
 pub mod g191;
 
@@ -8,6 +16,7 @@ pub trait Compander {
     #[must_use]
     fn expand(log: u8) -> i16;
 
+    #[cfg(feature = "alloc")]
     #[inline]
     fn expand_into<T: AsRef<[u8]> + ?Sized>(log: &T, linear: &mut Vec<i16>) {
         let log = log.as_ref();
@@ -16,6 +25,7 @@ pub trait Compander {
         linear.extend(log.iter().copied().map(Self::expand));
     }
 
+    #[cfg(feature = "alloc")]
     #[inline]
     fn compress_into<T: AsRef<[i16]> + ?Sized>(linear: &T, log: &mut Vec<u8>) {
         let linear = linear.as_ref();
@@ -25,6 +35,7 @@ pub trait Compander {
     }
 }
 
+#[cfg(feature = "alloc")]
 pub trait Compressed: AsRef<[u8]> {
     #[inline]
     fn expand<C: Compander>(&self) -> Vec<i16> {
@@ -39,8 +50,10 @@ pub trait Compressed: AsRef<[u8]> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<T: AsRef<[u8]>> Compressed for T {}
 
+#[cfg(feature = "alloc")]
 pub trait Expanded: AsRef<[i16]> {
     #[inline]
     fn compress<C: Compander>(&self) -> Vec<u8> {
@@ -55,6 +68,7 @@ pub trait Expanded: AsRef<[i16]> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<T: AsRef<[i16]>> Expanded for T {}
 
 #[derive(Debug, Clone, Copy, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -150,7 +164,7 @@ impl Compander for ALaw {
             let nonzero_exponent_marker_bit = u8::from(exponent > 0) << 4;
 
             let base = (i16::from(low_nibble | nonzero_exponent_marker_bit) << 4) | 0b1000;
-            let offset = u8::from(exponent > 1) * (exponent - 1);
+            let offset = u8::from(exponent > 1) * exponent.saturating_sub(1);
 
             base << offset
         };

@@ -20,7 +20,10 @@ description = "Rust implementations of the A-Law and μ-law companding algorithm
 all-features = true
 
 [features]
-default = []
+default = ["std"]
+
+std = ["alloc"]
+alloc = []
 
 g191 = ["cc"]
 g191-sys = ["cc", "visibility"]

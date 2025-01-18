@@ -1,4 +1,4 @@
-#![cfg(all(test, feature = "g191"))]
+#![cfg(all(test, feature = "g191", feature = "alloc"))]
 
 use amuse::{g191, Compressed, Expanded};
 use proptest::prelude::*;
