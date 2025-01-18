@@ -35,8 +35,8 @@ pub trait Compander {
     }
 }
 
-#[cfg(feature = "alloc")]
 pub trait Compressed: AsRef<[u8]> {
+    #[cfg(feature = "alloc")]
     #[inline]
     fn expand<C: Compander>(&self) -> Vec<i16> {
         let mut linear = Vec::new();
@@ -44,17 +44,17 @@ pub trait Compressed: AsRef<[u8]> {
         linear
     }
 
+    #[cfg(feature = "alloc")]
     #[inline]
     fn expand_into<C: Compander>(&self, linear: &mut Vec<i16>) {
         C::expand_into(self, linear);
     }
 }
 
-#[cfg(feature = "alloc")]
 impl<T: AsRef<[u8]>> Compressed for T {}
 
-#[cfg(feature = "alloc")]
 pub trait Expanded: AsRef<[i16]> {
+    #[cfg(feature = "alloc")]
     #[inline]
     fn compress<C: Compander>(&self) -> Vec<u8> {
         let mut log = Vec::new();
@@ -62,13 +62,13 @@ pub trait Expanded: AsRef<[i16]> {
         log
     }
 
+    #[cfg(feature = "alloc")]
     #[inline]
     fn compress_into<C: Compander>(&self, log: &mut Vec<u8>) {
         C::compress_into(self, log);
     }
 }
 
-#[cfg(feature = "alloc")]
 impl<T: AsRef<[i16]>> Expanded for T {}
 
 #[derive(Debug, Clone, Copy, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
