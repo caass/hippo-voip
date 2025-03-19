@@ -98,7 +98,7 @@ impl Compander for ULaw {
             reason = "`segment` increases with `offset` such that `offset >> segment <= 255` always holds."
         )]
         let low_nibble = 0b1111 - (((offset >> segment) as u8) & 0b1111);
-        let high_nibble = (8 - segment) << 4;
+        let high_nibble = (0b1000 - segment) << 4;
         let sign_bit = u8::from(!is_negative) << 7;
 
         high_nibble | low_nibble | sign_bit

@@ -1,12 +1,12 @@
 [workspace]
-resolver = "2"
-members = ["amuse", "hippo-voip"]
+resolver = "3"
+members = ["amuse"]
 
 [workspace.package]
 edition = "2021"
 authors = ["Cass Fridkin <cass@swag.lgbt>"]
 license = "AGPL-3.0-or-later"
-repository = "https://github.com/caass/hippovoip"
+repository = "https://github.com/caass/hippo-voip"
 
 [workspace.dependencies]
 amuse = { path = "./amuse", version = "0.1.0" }
